@@ -16,7 +16,7 @@ function App() {
   console.log(winners);
 
   const handleSquareClikck = (pos) => {
-    if (squares[pos]) return;
+    if (squares[pos] || winners) return;
 
     setSquares((currentSquares) => {
       return currentSquares.map((Squareval, position) => {
