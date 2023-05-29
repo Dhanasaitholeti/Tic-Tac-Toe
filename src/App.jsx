@@ -4,10 +4,15 @@ import Board from "./components/Board";
 import { calculateWinner } from "./winner";
 import StatusMessage from "./components/StatusMessage";
 function App() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(false);
+  const [history, setHistory] = useState([
+    { squares: Array(9).fill(null), isXNext: false },
+  ]);
 
-  const winners = calculateWinner(squares);
+  const [currentMove, setCurrentMove] = useState(0);
+
+  const gamingBoard = history[currentMove];
+
+  const winners = calculateWinner(gamingBoard.squares);
 
   const handleSquareClikck = (pos) => {
     if (squares[pos] || winners) return;
@@ -23,8 +28,11 @@ function App() {
   };
   return (
     <div className="app">
-      <StatusMessage winners={winners} isXNext={isXNext} squares={squares} />
-      <Board squares={squares} handleSquareClikck={handleSquareClikck} />
+      <StatusMessage winners={winners} gamingBoard={gamingBoard} />
+      <Board
+        squares={gamingBoard.squares}
+        handleSquareClikck={handleSquareClikck}
+      />
     </div>
   );
 }
