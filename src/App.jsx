@@ -3,6 +3,8 @@ import { useState } from "react";
 import Board from "./components/Board";
 import { calculateWinner } from "./winner";
 import StatusMessage from "./components/StatusMessage";
+import History from "./components/History";
+
 function App() {
   const [history, setHistory] = useState([
     { squares: Array(9).fill(null), isXNext: false },
@@ -15,17 +17,39 @@ function App() {
   const winners = calculateWinner(gamingBoard.squares);
 
   const handleSquareClikck = (pos) => {
-    if (squares[pos] || winners) return;
+    if (gamingBoard.squares[pos] || winners) return;
 
-    setSquares((currentSquares) => {
-      return currentSquares.map((Squareval, position) => {
-        if (pos === position) return isXNext ? "X" : "O";
+    setHistory((currentHistory) => {
+      const isTraversing = currentMove + 1 !== currentHistory.length;
 
-        return Squareval;
+      const lastGamingState = isTraversing
+        ? currentHistory[currentMove]
+        : history[history.length - 1];
+
+      const nextSquareState = lastGamingState.squares.map(
+        (Squareval, position) => {
+          if (pos === position) return lastGamingState.isXNext ? "X" : "O";
+          return Squareval;
+        }
+      );
+
+      const base = isTraversing
+        ? currentHistory.slice(0, currentHistory.indexOf(lastGamingState) + 1)
+        : currentHistory;
+
+      return base.concat({
+        squares: nextSquareState,
+        isXNext: !lastGamingState.isXNext,
       });
     });
-    setIsXNext(!isXNext);
+
+    setCurrentMove((move) => move + 1);
   };
+
+  const moveTo = (move) => {
+    setCurrentMove(move);
+  };
+
   return (
     <div className="app">
       <StatusMessage winners={winners} gamingBoard={gamingBoard} />
@@ -33,6 +57,8 @@ function App() {
         squares={gamingBoard.squares}
         handleSquareClikck={handleSquareClikck}
       />
+      <h2>current game history</h2>
+      <History history={history} moveTo={moveTo} currentMove={currentMove} />
     </div>
   );
 }
