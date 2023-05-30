@@ -56,6 +56,7 @@ function App() {
 
   return (
     <div className="app">
+      <h1>TIC TAC TOE</h1>
       <StatusMessage winners={winners} gamingBoard={gamingBoard} />
       <Board
         squares={gamingBoard.squares}
